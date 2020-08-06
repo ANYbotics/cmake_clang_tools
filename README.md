@@ -114,6 +114,9 @@ run_clang_tidy: true
 # Whitelist of packages to run clang_tools.
 # Empty list -> run on all packages.
 whitelist: {}
+# Blacklist of packages to not run cmake_clang_tools.
+# Empty list -> ignore no packages.
+blacklist: {}
 ```
 
 With the first two arguments you can toggle execution of clang_tidy and clang_format. This is meant as a temporary solution while developing, since clang_tools can increase compile time quite a bit. **DO NOT TURN OFF CLANG_TOOLING PERMANENTLY!**
