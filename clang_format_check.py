@@ -28,9 +28,9 @@ def check_init(trigger_file):
     with open(trigger_file, 'r') as f:
         return f.readline() == "INIT"
 
-def replacements_from_file(file, json_config, fix):
+def replacements_from_file(executable, file, json_config, fix):
     replacements = []
-    clang_format_args = ["clang-format-7"]
+    clang_format_args = [executable]
     clang_format_args.append("-style={}".format(json_config))
     if fix:
         clang_format_args.append("-i")
@@ -78,12 +78,12 @@ def errors_from_replacements(file, replacements=[]):
     return errors
 
 
-def clang_format_check(files, json_config, fix):
+def clang_format_check(executable, files, json_config, fix):
     error_count = 0
     file_errors = dict()
 
     for file in files:
-        replacements = replacements_from_file(file, json_config, fix)
+        replacements = replacements_from_file(executable, file, json_config, fix)
         errors = errors_from_replacements(file, replacements)
         error_count += len(errors)
         file_errors[file] = errors
@@ -113,6 +113,11 @@ def print_error_report(error_count, file_errors, error_assert, fix, verbose):
 def main():
     parser = argparse.ArgumentParser(
         description="C/C++ formatting check using clang-format")
+
+    # clang-format executable
+    parser.add_argument("-clang-format-executable",
+                        default="clang-format",
+                        help="Clang-format executable (default is '%(default)s').")
 
     # .clang-format path
     parser.add_argument("-config-file",
@@ -157,7 +162,7 @@ def main():
              file_list = list(files)
 
              # Run clang-format
-             error_count, file_errors = clang_format_check(file_list, json.dumps(yaml_config), args.fix)
+             error_count, file_errors = clang_format_check(args.clang_format_executable, file_list, json.dumps(yaml_config), args.fix)
              print_error_report(error_count, file_errors, args.error, args.fix, args.verbose)
 
              # Return false if errors occured

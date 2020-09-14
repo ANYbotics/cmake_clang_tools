@@ -20,14 +20,13 @@ if hasattr(yaml, 'warnings'):
 
 __author__ = "Gabriel Hottiger"
 __version__ = "0.1"
-__clang_tidy_executable__ = "clang-tidy-7"
 
 def check_init(trigger_file):
     with open(trigger_file, 'r') as f:
         return f.readline() == "INIT"
 
 # Call clang tidy with given args
-def execute_clang_tidy(files, config_file, build_directory, header_filter, header_dirs, exclude_header_dirs, error, fix, verbose):
+def execute_clang_tidy(executable, files, config_file, build_directory, header_filter, header_dirs, exclude_header_dirs, error, fix, verbose):
 
     # Check wheter search file should be attempted
     json_config = ""
@@ -74,7 +73,7 @@ def execute_clang_tidy(files, config_file, build_directory, header_filter, heade
             header_filter = header_filter[:-1];
 
     # TODO do it the proper way without shell
-    # clang_tidy_args = [__clang_tidy_executable__]
+    # clang_tidy_args = [executable]
     # clang_tidy_args.append("-quiet")
     # clang_tidy_args.append("--config={}".format(json.dumps(json_config)))
     # clang_tidy_args.append("-p={}".format(build_directory))
@@ -84,7 +83,7 @@ def execute_clang_tidy(files, config_file, build_directory, header_filter, heade
     #     clang_tidy_args.append(os.path.basename(file))
 
     # Add everything as a single string
-    clang_tidy_args = __clang_tidy_executable__ + " --config={}".format(json_config) + \
+    clang_tidy_args = executable + " --config={}".format(json_config) + \
         " -p={}".format(build_directory) + " -header-filter=\'{}\'".format(header_filter) + \
         " -export-fixes={}/clang-tidy-fixes.yaml".format(build_directory) + \
         " -extra-arg=-w";
@@ -101,6 +100,11 @@ def execute_clang_tidy(files, config_file, build_directory, header_filter, heade
 
 def main():
     parser = argparse.ArgumentParser(description="C/C++ style check using clang-tidy")
+
+    # clang tidy executable
+    parser.add_argument("-clang-tidy-executable",
+                        default="clang-tidy",
+                        help="Clang-tidy executable (default is '%(default)s').")
 
     # cmake project name
     parser.add_argument("-project",
@@ -155,7 +159,7 @@ def main():
 
     try:
         if args.trigger_file and check_init(args.trigger_file):
-            result = execute_clang_tidy(args.files, args.config_file, args.build_directory, args.header_filter,
+            result = execute_clang_tidy(args.clang_tidy_executable, args.files, args.config_file, args.build_directory, args.header_filter,
                                         args.header_dirs, args.exclude_header_dirs, args.error, args.fix, args.verbose)
             exit(result)
         else:

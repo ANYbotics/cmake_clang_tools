@@ -10,9 +10,9 @@
 
   <!-- The *_depend tags are used to specify dependencies -->
   <buildtool_depend>cmake</buildtool_depend>
-  <buildtool_export_depend>clang-7</buildtool_export_depend>
-  <buildtool_export_depend>clang-format-7</buildtool_export_depend>
-  <buildtool_export_depend>clang-tidy-7</buildtool_export_depend>
+  <buildtool_export_depend>clang</buildtool_export_depend>
+  <buildtool_export_depend>clang-format</buildtool_export_depend>
+  <buildtool_export_depend>clang-tidy</buildtool_export_depend>
   <buildtool_export_depend>python3-yaml</buildtool_export_depend>
   <export>
     <!-- Specify that this is not really a ROS package-->

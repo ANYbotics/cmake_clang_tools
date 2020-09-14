@@ -43,9 +43,9 @@ macro(ADD_CLANG_FORMAT)
     set(CLANG_FORMAT_OPTIONS ${CLANG_FORMAT_OPTIONS} "--verbose")
   endif(NOT ADD_CLANG_FORMAT_QUIET)
 
-  find_program(CLANG_FORMAT "clang-format-7")
+  find_program(CLANG_FORMAT NAMES "clang-format-12" "clang-format-11" "clang-format-10" "clang-format-9" "clang-format-8" "clang-format-7" "clang-format")
   if(CLANG_FORMAT)
-    message(STATUS "Running clang-format:")
+    message(STATUS "Running ${CLANG_FORMAT}:")
     message(STATUS "Files: " ${ADD_CLANG_FORMAT_SOURCES})
     message(STATUS "Config: " ${ADD_CLANG_FORMAT_CONFIG_FILE})
     message(STATUS "Options: " ${CLANG_FORMAT_OPTIONS})
@@ -141,6 +141,7 @@ macro(ADD_CLANG_FORMAT)
           add_custom_command(
               OUTPUT "${CLANG_FORMAT_PROXY}"
               COMMAND @PYTHON_SCRIPTS_DIR@/clang_format_check.py
+                        -clang-format-executable=${CLANG_FORMAT}
                         -config-file=${ADD_CLANG_FORMAT_CONFIG_FILE}
                         -trigger-file="${CLANG_FORMAT_TRIGGER}"
                         ${CLANG_FORMAT_OPTIONS}
@@ -178,7 +179,7 @@ macro(ADD_CLANG_FORMAT)
     endif (CLANG_FORMAT_PROXIES)
 
   else(CLANG_FORMAT)
-    message(WARNING "Could not find clang-format-7!")
+    message(WARNING "Could not find clang-format!")
   endif(CLANG_FORMAT)
 endmacro(ADD_CLANG_FORMAT)
 
@@ -235,9 +236,9 @@ macro(ADD_CLANG_TIDY)
     message(WARNING "CLANG-TIDY: If HEADER_DIRS is set, HEADER_FILTER is ignored!")
   endif(ADD_CLANG_TIDY_HEADER_FILTER AND ADD_CLANG_TIDY_HEADER_DIRS)
 
-  find_program(CLANG_TIDY "clang-tidy-7")
+  find_program(CLANG_TIDY NAMES "clang-tidy-12" "clang-tidy-11" "clang-tidy-10" "clang-tidy-9" "clang-tidy-8" "clang-tidy-7" "clang-tidy")
   if(CLANG_TIDY)
-    message(STATUS "Running clang-tidy:")
+    message(STATUS "Running ${CLANG_TIDY}:")
     message(STATUS "Files: " ${ADD_CLANG_TIDY_SOURCES})
     message(STATUS "Config: " ${ADD_CLANG_TIDY_CONFIG_FILE})
     message(STATUS "Build directory: " ${ADD_CLANG_TIDY_BUILD_DIR})
@@ -338,6 +339,7 @@ macro(ADD_CLANG_TIDY)
           add_custom_command(
               OUTPUT "${CLANG_TIDY_PROXY}"
               COMMAND @PYTHON_SCRIPTS_DIR@/clang_tidy_check.py
+                      -clang-tidy-executable=${CLANG_TIDY}
                       -build-directory=${ADD_CLANG_TIDY_BUILD_DIR}
                       -trigger-file="${CLANG_TIDY_TRIGGER}"
                       -config-file=${ADD_CLANG_TIDY_CONFIG_FILE}
@@ -371,7 +373,7 @@ macro(ADD_CLANG_TIDY)
     endif (CLANG_TIDY_PROXIES)
 
   else(CLANG_TIDY)
-    message(WARNING "Could not find clang-tidy-7!")
+    message(WARNING "Could not find clang-tidy!")
   endif(CLANG_TIDY)
 endmacro(ADD_CLANG_TIDY)
 

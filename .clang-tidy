@@ -6,6 +6,9 @@ cppcoreguidelines-*,
 -cppcoreguidelines-special-member-functions,
 -cppcoreguidelines-pro-bounds-constant-array-index,
 -cppcoreguidelines-owning-memory,
+-cppcoreguidelines-avoid-magic-numbers,
+-cppcoreguidelines-non-private-member-variables-in-classes,
+-cppcoreguidelines-macro-usage,
 google-*,
 -google-runtime-references,
 -google-runtime-int,
@@ -21,6 +24,8 @@ readability-*,
 -readability-redundant-member-init,
 -readability-else-after-return,
 -readability-function-size,
+-readability-magic-numbers,
+-readability-uppercase-literal-suffix,
 -readability-avoid-const-params-in-decls'
 
 CheckOptions:
