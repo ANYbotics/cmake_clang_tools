@@ -5,6 +5,11 @@
 #
 ###
 
+# Static analysis target to collect all static analysis targets.
+if(NOT TARGET run_static_analysis)
+  add_custom_target(run_static_analysis)
+endif(NOT TARGET run_static_analysis)
+
 #########################################
 #####       ADD_CLANG_FORMAT        #####
 #########################################
@@ -187,7 +192,7 @@ endmacro(ADD_CLANG_FORMAT)
 #####        ADD_CLANG_TIDY         #####
 #########################################
 macro(ADD_CLANG_TIDY)
-  set(options WERROR FIX QUIET)
+  set(options WERROR FIX QUIET ATTACH_TO_ALL)
   set(oneValueArgs CONFIG_FILE HEADER_FILTER BUILD_DIR)
   set(multiValueArgs SOURCES TARGETS HEADERS HEADER_DIRS HEADER_EXCLUDE_DIRS)
   cmake_parse_arguments(ADD_CLANG_TIDY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
@@ -357,10 +362,19 @@ macro(ADD_CLANG_TIDY)
     endforeach ()
 
     if (CLANG_TIDY_PROXIES)
-        add_custom_target(${PROJECT_NAME}_clang-tidy ALL
-            SOURCES ${CLANG_TIDY_PROXIES}
-            COMMENT "Clang-Tidy for project ${PROJECT_NAME}"
-        )
+        if(ADD_CLANG_TIDY_ATTACH_TO_ALL)
+          add_custom_target(${PROJECT_NAME}_clang-tidy ALL
+              SOURCES ${CLANG_TIDY_PROXIES}
+              COMMENT "Clang-Tidy for project ${PROJECT_NAME}"
+          )
+        else()
+          add_custom_target(${PROJECT_NAME}_clang-tidy
+              SOURCES ${CLANG_TIDY_PROXIES}
+              COMMENT "Clang-Tidy for project ${PROJECT_NAME}"
+          )
+          add_dependencies(run_static_analysis ${PROJECT_NAME}_clang-tidy)
+        endif()
+
         if(ADD_CLANG_TIDY_TARGETS)
           foreach (PROJECT_TARGET ${ADD_CLANG_TIDY_TARGETS})
             if(TARGET ${PROJECT_TARGET})
@@ -382,7 +396,7 @@ endmacro(ADD_CLANG_TIDY)
 #########################################
 # Add clang tooling to your target
 macro(ADD_CLANG_TOOLING)
-  set(options CT_WERROR CT_FIX CT_QUIET CF_WERROR CF_FIX CF_QUIET DISABLE_CLANG_FORMAT DISABLE_CLANG_TIDY)
+  set(options CT_WERROR CT_FIX CT_QUIET CT_ATTACH_TO_ALL CF_WERROR CF_FIX CF_QUIET DISABLE_CLANG_FORMAT DISABLE_CLANG_TIDY)
   set(oneValueArgs TARGET CT_CONFIG_FILE CF_CONFIG_FILE CT_HEADER_FILTER CT_BUILD_DIR)
   set(multiValueArgs TARGETS SOURCE_DIRS CT_HEADER_DIRS CT_HEADER_EXCLUDE_DIRS)
   cmake_parse_arguments(ADD_CLANG_TOOLING "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
@@ -461,6 +475,10 @@ macro(ADD_CLANG_TOOLING)
     if(${ADD_CLANG_TOOLING_CT_QUIET})
       set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} "QUIET")
     endif(${ADD_CLANG_TOOLING_CT_QUIET})
+    if(${ADD_CLANG_TOOLING_CT_ATTACH_TO_ALL})
+      set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} "ATTACH_TO_ALL")
+    endif(${ADD_CLANG_TOOLING_CT_ATTACH_TO_ALL})
+
 
     # Call clang-tidy
     ADD_CLANG_TIDY(

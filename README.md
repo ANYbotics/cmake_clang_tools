@@ -104,6 +104,20 @@ endif(cmake_clang_tools_FOUND)
 
 Some example flags were used for the add_clang_tooling cmake macro, see below for a complete list.
 
+## Running clang_tooling
+
+The format checking/fixing (using clang-format) happens before the source code is built and is triggered automatically on every build.
+
+The static analysis (using clang-tidy) has two run behaviors.
+Per default, the static analysis is executed when the `run_static_analysis` CMake target is built.
+To run static analysis for `my_package` run the following command:
+```
+catkin build --catkin-make-args run_static_analysis -- my_package --no-deps
+```
+You can configure clang-tidy to run on every build, by setting the `ATTACH_TO_ALL` option for clang tidy.
+This is only recommended in combination with toggling of the clang_tooling configuration (described in the next section).
+Otherwise it can lead to significant compile time overhead during the development phase.
+
 ## Configure clang_tooling
 You can configure clang_tooling with a config file located at ```/home/user/.config/cmake_clang_tools/config.yaml```. clang_tools will generate the following default config on it's first run.
 ```
@@ -119,7 +133,8 @@ whitelist: {}
 blacklist: {}
 ```
 
-With the first two arguments you can toggle execution of clang_tidy and clang_format. This is meant as a temporary solution while developing, since clang_tools can increase compile time quite a bit. **DO NOT TURN OFF CLANG_TOOLING PERMANENTLY!**
+With the first two arguments you can toggle execution of clang_tidy and clang_format.
+This is meant as a temporary solution while developing, since clang_tidy can increase compile time quite a bit.
 
 If you only want to run clang_tooling on some packages, you can configure a whitelist. This is useful if you are the maintainer of only a subset of packages that you compile from source.
 
@@ -177,6 +192,7 @@ ADD_CLANG_TOOLING(TARGETS target1 .. targetN
                   [CT_WERROR]
                   [CT_FIX]
                   [CT_QUIET]
+                  [CT_ATTACH_TO_ALL]
                   [CT_CONFIG_FILE ct_config_path]
                   [CT_HEADER_DIRS dir1 .. dirN]
                   [CT_HEADER_EXCLUDE_DIRS excludeDir1 .. excludeDirN]
@@ -226,6 +242,7 @@ ADD_CLANG_TIDY(TARGETS target1 .. targetN
                [WERROR]
                [FIX]
                [QUIET]
+               [ATTACH_TO_ALL]
                [CONFIG_FILE config_path]
                [HEADER_DIRS dir1 .. dirN]
                [HEADER_EXCLUDE_DIRS excludeDir1 .. excludeDirN]
@@ -241,6 +258,8 @@ ADD_CLANG_TIDY(TARGETS target1 .. targetN
 **FIX** Fix clang-tidy issues inline (**Not Recommended!**)
 
 **QUIET** Output to stdout instead of stderr
+
+**ATTACH_TO_ALL** Attach the clang-tidy target to the ALL target. Runs clang-tidy on every build.
 
 **CONFIG_FILE** Clang-tidy config file to be used (default: .clang-tidy in this repo)
 

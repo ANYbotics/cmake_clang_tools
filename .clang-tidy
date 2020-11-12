@@ -1,5 +1,5 @@
 ---
-# Format: Name of the check / Warning(W), Error(E), Skip (S) or Duplicate (D) / Justification
+# Format: Name of the check / Warning(W), Error(E), Skip (S), Covered by Compiler Warning (C) or Duplicate (D) / Justification
 
 # Checks:
 # boost-use-to-string                                         / W / use STL whenever possible
