@@ -499,10 +499,11 @@ endmacro(ADD_CLANG_TOOLING)
 
 
 macro(ADD_DEFAULT_CLANG_TOOLING)
-  set(multiValueArgs TARGETS)
-  cmake_parse_arguments(ADD_DEFAULT_CLANG_TOOLING "" "" "${multiValueArgs}" ${ARGN} )
+  set(options CF_NO_FIX CF_FIX)
+  set(multiValueArgs CT_HEADER_DIRS SOURCE_DIRS TARGETS)
+  cmake_parse_arguments(ADD_DEFAULT_CLANG_TOOLING "${options}" "" "${multiValueArgs}" ${ARGN} )
 
-  # If no target is specified use the ones from the default
+  # If no target is specified, set default.
   if(NOT ADD_DEFAULT_CLANG_TOOLING_TARGETS)
     set(ADD_DEFAULT_CLANG_TOOLING_TARGETS "")
     set(CLANG_TOOLING_TARGET_CANDIDATES "${PROJECT_NAME}" "${PROJECT_NAME}_core" "${PROJECT_NAME}_node" "test_${PROJECT_NAME}" "test_${PROJECT_NAME}_core" "test_${PROJECT_NAME}_node")
@@ -513,17 +514,34 @@ macro(ADD_DEFAULT_CLANG_TOOLING)
     endforeach(CLANG_TOOLING_TARGET_CANDIDATE)
   endif()
 
+  # If no sources set, set default.
+  if(NOT ADD_DEFAULT_CLANG_TOOLING_SOURCE_DIRS)
+    set(ADD_DEFAULT_CLANG_TOOLING_SOURCE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/test")
+  endif()
+
+  # If no header dirs set, set default.
+  if(NOT ADD_DEFAULT_CLANG_TOOLING_CT_HEADER_DIRS)
+    set(ADD_DEFAULT_CLANG_TOOLING_CT_HEADER_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/test")
+  endif()
+
+  # Options.
+  if(ADD_DEFAULT_CLANG_TOOLING_CF_FIX)
+    message(FATAL_ERROR "[cmake_clang_tools::ADD_DEFAULT_CLANG_TOOLING] CF_FIX is not supported, as it is enabled by default.")
+  endif()
+
+  set(ADD_DEFAULT_CLANG_TOOLING_OPTIONS "")
+  if(NOT ADD_DEFAULT_CLANG_TOOLING_CF_NO_FIX)
+    set(ADD_DEFAULT_CLANG_TOOLING_OPTIONS ${ADD_DEFAULT_CLANG_TOOLING_OPTIONS} "CF_FIX")
+  endif()
+
   ADD_CLANG_TOOLING(
     TARGETS
       ${ADD_DEFAULT_CLANG_TOOLING_TARGETS}
     SOURCE_DIRS
-      ${CMAKE_CURRENT_SOURCE_DIR}/src
-      ${CMAKE_CURRENT_SOURCE_DIR}/include
-      ${CMAKE_CURRENT_SOURCE_DIR}/test
+      ${ADD_DEFAULT_CLANG_TOOLING_SOURCE_DIRS}
     CT_HEADER_DIRS
-      ${CMAKE_CURRENT_SOURCE_DIR}/src
-      ${CMAKE_CURRENT_SOURCE_DIR}/include
-      ${CMAKE_CURRENT_SOURCE_DIR}/test
-    CF_FIX
+      ${ADD_DEFAULT_CLANG_TOOLING_CT_HEADER_DIRS}
+    ${ADD_DEFAULT_CLANG_TOOLING_OPTIONS}
+    ${ARGN}
   )
 endmacro(ADD_DEFAULT_CLANG_TOOLING)

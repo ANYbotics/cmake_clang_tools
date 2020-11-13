@@ -65,8 +65,10 @@ In order to use clang_tools in your CMake/catkin project you will have to add th
 
 **Default usage**
 
-For packages that have all source code in `src`, `test` and `include` folders the default macro `add_default_clang_tooling` can be used.
-This macro will fix formatting issues during compilation. If all targets are present in the list (`${PROJECT_NAME}`, `${PROJECT_NAME}_core`,
+The default macro `add_default_clang_tooling` sets reasonable default values for the arguments of `add_clang_tooling`.
+It assumes that the source code of the package is located in folders named `src`, `include` and `test`.
+This macro will fix formatting issues during compilation.
+If all targets are present in the list (`${PROJECT_NAME}`, `${PROJECT_NAME}_core`,
 `${PROJECT_NAME}_node`, `test_${PROJECT_NAME}`, `test_${PROJECT_NAME}_core`, `test_${PROJECT_NAME}_node`) the `TARGETS` option can be omitted.
 
 ```
@@ -183,6 +185,30 @@ Foo(bool param);
 Current Settings: See .clang-tidy file.
 
 # CMake macros
+
+## add_default_clang_tooling
+```
+ADD_DEFAULT_CLANG_TOOLING(TARGETS target1 .. targetN
+                          [SOURCE_DIRS sourceDir1 .. sourceDirN]
+                          [DISABLE_CLANG_TIDY]
+                          [CT_WERROR]
+                          [CT_FIX]
+                          [CT_QUIET]
+                          [CT_ATTACH_TO_ALL]
+                          [CT_CONFIG_FILE ct_config_path]
+                          [CT_HEADER_DIRS dir1 .. dirN]
+                          [CT_HEADER_EXCLUDE_DIRS excludeDir1 .. excludeDirN]
+                          [CT_HEADER_FILTER header_filter]
+                          [CT_BUILD_DIR build_dir]
+                          [DISABLE_CLANG_FORMAT]
+                          [CF_WERROR]
+                          [CF_NO_FIX]
+                          [CF_QUIET]
+                          [CF_CONFIG_FILE cf_config_path])
+```
+**CF_NO_FIX** Don't fix formatting issues
+
+For the remaining options check the `add_clang_tooling` macro.
 
 ## add_clang_tooling
 ```
