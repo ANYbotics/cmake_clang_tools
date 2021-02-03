@@ -122,7 +122,7 @@
 # modernize-use-emplace                                       / W / performance
 # modernize-use-equals-default                                / W / readability
 # modernize-use-equals-delete                                 / W / readability
-# modernize-use-nodiscard                                     / S / C++17 feature
+# modernize-use-nodiscard                                     / S / function caller is responsible for discarding or not
 # modernize-use-noexcept                                      / W / readability
 # modernize-use-nullptr                                       / W / readability, type safety
 # modernize-use-override                                      / W / modernize and prevent typos in overrides
@@ -270,7 +270,6 @@ modernize-use-bool-literals,
 modernize-use-emplace,
 modernize-use-equals-default,
 modernize-use-equals-delete,
-modernize-use-nodiscard,
 modernize-use-noexcept,
 modernize-use-nullptr,
 modernize-use-override,
