@@ -319,6 +319,8 @@ CheckOptions:
     value:           1
   - key:             cppcoreguidelines-special-member-functions.AllowMissingMoveFunctions
     value:           1
+  - key:             misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value:           1
   - key:             readability-identifier-naming.ClassCase
     value:           CamelCase
   - key:             readability-identifier-naming.EnumCase
