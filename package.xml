@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>cmake_clang_tools</name>
-  <version>0.5.0</version>
+  <version>0.6.0</version>
   <description>CMake helpers for clang-tidy / clang-format.</description>
-  <license>Proprietary</license>
+  <license>BSD</license>
   <maintainer email="ghottiger@anybotics.com">Gabriel Hottiger</maintainer>
   <maintainer email="pleemann@anybotics.com">Philipp Leemann</maintainer>
   <author email="ghottiger@anybotics.com">Gabriel Hottiger</author>

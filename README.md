@@ -6,6 +6,8 @@ This package provides cmake helper macros in order to run clang-tidy and clang-f
 
 It also contains python scripts that wrap around those tools to adapt their behavior.
 
+The source code is released under a [BSD 3-Clause license](LICENSE).
+
 **Author(s):** Gabriel Hottiger
 
 # Example repository
