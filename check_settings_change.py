@@ -6,9 +6,6 @@ import argparse
 import traceback
 from shutil import copyfile
 
-if hasattr(yaml, 'warnings'):
-    yaml.warnings({'YAMLLoadWarning': False})
-
 
 def main():
     parser = argparse.ArgumentParser(description="Check if clang tool should be run according to settings file.")
@@ -33,8 +30,8 @@ def main():
                     in_cached_list = args.project_name in cached_list
                     return in_current_list != in_cached_list
 
-                yaml_settings = yaml.load(settingsFile)
-                yaml_settings_cached = yaml.load(settingsFileCached)
+                yaml_settings = yaml.safe_load(settingsFile)
+                yaml_settings_cached = yaml.safe_load(settingsFileCached)
                 run_changed = yaml_settings['run_' + args.tool_name] != yaml_settings_cached['run_' + args.tool_name]
 
                 if run_changed \
@@ -50,6 +47,7 @@ def main():
         print('-'*60)
         traceback.print_exc()
         print('-'*60)
+        print(f"Using 'yaml' module version {yaml.__version__}.")
         exit(-2)
 
 

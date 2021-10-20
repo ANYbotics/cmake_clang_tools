@@ -15,9 +15,6 @@ import re
 from itertools import chain
 import traceback
 
-if hasattr(yaml, 'warnings'):
-    yaml.warnings({'YAMLLoadWarning': False})
-
 __author__ = "Gabriel Hottiger"
 __version__ = "0.1"
 
@@ -33,7 +30,7 @@ def execute_clang_tidy(executable, files, config_file, build_directory, header_f
     if config_file != "file":
         # Load yaml from file
         with open(config_file, 'r') as handle:
-            yaml_config = yaml.load(handle)
+            yaml_config = yaml.safe_load(handle)
         json_config = json.dumps(yaml_config)
         # Replace double quotes with single quotes
         idx = json_config.find("Checks") + 7
@@ -171,6 +168,7 @@ def main():
         print ('-'*60)
         traceback.print_exc()
         print ('-'*60)
+        print(f"Using 'yaml' module version {yaml.__version__}.")
         exit(-2)
 
 if __name__ == "__main__":

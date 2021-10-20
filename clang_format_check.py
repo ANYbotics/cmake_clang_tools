@@ -15,9 +15,6 @@ from collections import namedtuple
 import yaml, json, sys
 import traceback
 
-if hasattr(yaml, 'warnings'):
-    yaml.warnings({'YAMLLoadWarning': False})
-
 Replacement = namedtuple("Replacement", "offset length text")
 Error = namedtuple("Error", "line column found expected")
 
@@ -152,7 +149,7 @@ def main():
         if args.trigger_file and check_init(args.trigger_file):
              # Load yaml from file
              with open(args.config_file, 'r') as handle:
-                 yaml_config = yaml.load(handle)
+                 yaml_config = yaml.safe_load(handle)
 
              # globing the file paths
              files = set()
@@ -177,6 +174,7 @@ def main():
         print ('-'*60)
         traceback.print_exc()
         print ('-'*60)
+        print(f"Using 'yaml' module version {yaml.__version__}.")
         exit(-2)
 
 if __name__ == "__main__":

@@ -5,9 +5,6 @@ import yaml
 import argparse
 import traceback
 
-if hasattr(yaml, 'warnings'):
-    yaml.warnings({'YAMLLoadWarning': False})
-
 
 def main():
     parser = argparse.ArgumentParser(description="Check if clang tool should be run according to settings file.")
@@ -26,7 +23,7 @@ def main():
                     current_list = settings[list_name]
                 return (args.project_name in current_list) or (or_is_empty and not current_list)
 
-            yaml_settings = yaml.load(settingsFile)
+            yaml_settings = yaml.safe_load(settingsFile)
             run_clang_tool = yaml_settings['run_' + args.tool_name]
 
             if run_clang_tool \
@@ -42,6 +39,7 @@ def main():
         print('-'*60)
         traceback.print_exc()
         print('-'*60)
+        print(f"Using 'yaml' module version {yaml.__version__}.")
         exit(-2)
 
 
