@@ -23,7 +23,7 @@ def check_init(trigger_file):
         return f.readline() == "INIT"
 
 # Call clang tidy with given args
-def execute_clang_tidy(executable, files, config_file, build_directory, header_filter, header_dirs, exclude_header_dirs, error, fix, verbose):
+def execute_clang_tidy(executable, files, config_file, build_directory, header_filter, header_dirs, exclude_header_dirs, error, fix, verbose, checks):
 
     # Check wheter search file should be attempted
     json_config = ""
@@ -43,10 +43,8 @@ def execute_clang_tidy(executable, files, config_file, build_directory, header_f
     header_dirs = header_dirs.split()
     if exclude_header_dirs:
     	exclude_header_dirs = exclude_header_dirs.split()
-    #print(header_dirs)
-    #print(exclude_header_dirs)
 
-# Build header filter (this overwrites the header filter if specified)
+    # Build header filter (this overwrites the header filter if specified)
     if header_dirs:
         if exclude_header_dirs:
             # Build a regular expression
@@ -69,29 +67,20 @@ def execute_clang_tidy(executable, files, config_file, build_directory, header_f
                 header_filter += (dir + "/.*|");
             header_filter = header_filter[:-1];
 
-    # TODO do it the proper way without shell
-    # clang_tidy_args = [executable]
-    # clang_tidy_args.append("-quiet")
-    # clang_tidy_args.append("--config={}".format(json.dumps(json_config)))
-    # clang_tidy_args.append("-p={}".format(build_directory))
-    # clang_tidy_args.append("-header-filter={}".format(header_filter))
-    # clang_tidy_args.append("-export-fixes={}/clang-tidy-fixes.yaml".format(build_directory))
-    # for file in files:
-    #     clang_tidy_args.append(os.path.basename(file))
-
     # Add everything as a single string
-    clang_tidy_args = executable + " --config={}".format(json_config) + \
-        " -p={}".format(build_directory) + " -header-filter=\'{}\'".format(header_filter) + \
-        " -export-fixes={}/clang-tidy-fixes.yaml".format(build_directory) + \
-        " -extra-arg=-w";
+    clang_tidy_args = executable + f" --config={json_config}" + \
+        f" -p={build_directory}  -header-filter=\'{header_filter}\'" + \
+        f" -export-fixes={build_directory}/clang-tidy-fixes.yaml -extra-arg=-w";
     if error:
         clang_tidy_args += " -warnings-as-errors='*'";
     if fix:
         clang_tidy_args += " --fix";
+    if checks:
+        clang_tidy_args += f" --checks='{checks}'";
     for file in files:
         clang_tidy_args += " " + os.path.abspath(file);
-    # print( clang_tidy_args )
-    # # Call clang-tidy
+
+    # Call clang-tidy
     stream = sys.stderr if verbose else sys.stdout
     return subprocess.call(clang_tidy_args, cwd=os.path.dirname(file), shell=True, stdout=stream, stderr=sys.stdout);
 
@@ -134,6 +123,10 @@ def main():
                         help="Header filter to overload specifications from the config_file (default is '%(default)s'). \
                                 Only applied if no header-dirs are set.")
 
+    # Checks
+    parser.add_argument("-checks",
+                        help="Comma-separated list of checks to add or remove.")
+
     # Warnings as Errors
     parser.add_argument("--error",
                         action="store_true",
@@ -149,6 +142,7 @@ def main():
                         action="store_true",
                         help="Output to stderr.")
 
+
     # Files or directory to check
     parser.add_argument("files", nargs="+", help="Paths to the files that should be checked.")
 
@@ -157,7 +151,7 @@ def main():
     try:
         if args.trigger_file and check_init(args.trigger_file):
             result = execute_clang_tidy(args.clang_tidy_executable, args.files, args.config_file, args.build_directory, args.header_filter,
-                                        args.header_dirs, args.exclude_header_dirs, args.error, args.fix, args.verbose)
+                                        args.header_dirs, args.exclude_header_dirs, args.error, args.fix, args.verbose, args.checks)
             exit(result)
         else:
             exit(0)

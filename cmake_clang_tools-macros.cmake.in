@@ -194,7 +194,7 @@ endmacro(ADD_CLANG_FORMAT)
 macro(ADD_CLANG_TIDY)
   set(options WERROR FIX QUIET ATTACH_TO_ALL)
   set(oneValueArgs CONFIG_FILE HEADER_FILTER BUILD_DIR)
-  set(multiValueArgs SOURCES TARGETS HEADERS HEADER_DIRS HEADER_EXCLUDE_DIRS)
+  set(multiValueArgs SOURCES TARGETS HEADERS HEADER_DIRS HEADER_EXCLUDE_DIRS CHECKS)
   cmake_parse_arguments(ADD_CLANG_TIDY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
   # Check unparsed args
@@ -231,6 +231,12 @@ macro(ADD_CLANG_TIDY)
     set(ADD_CLANG_TIDY_OPTIONS ${ADD_CLANG_TIDY_OPTIONS} "--verbose")
   endif(NOT ADD_CLANG_TIDY_QUIET)
 
+  # Add checks
+  set(ADD_CLANG_TIDY_CHECKS_STRING "")
+  if (ADD_CLANG_TIDY_CHECKS)
+    string(REPLACE ";" "," ADD_CLANG_TIDY_CHECKS_STRING "${ADD_CLANG_TIDY_CHECKS}")
+  endif(ADD_CLANG_TIDY_CHECKS)
+
   # Assert misuse of header dirs
   if (ADD_CLANG_TIDY_HEADER_EXCLUDE_DIRS AND NOT ADD_CLANG_TIDY_HEADER_DIRS)
     message(WARNING "CLANG-TIDY: If HEADER_EXCLUDE_DIRS are set, HEADER_DIRS must be set too! Using HEADER_FILTER instead.")
@@ -250,6 +256,7 @@ macro(ADD_CLANG_TIDY)
     message(STATUS "Header filter: " ${ADD_CLANG_TIDY_HEADER_FILTER})
     message(STATUS "Header dirs: " ${ADD_CLANG_TIDY_HEADER_DIRS})
     message(STATUS "Exclude header dirs: " ${ADD_CLANG_TIDY_HEADER_EXCLUDE_DIRS})
+    message(STATUS "Checks: " ${ADD_CLANG_TIDY_CHECKS})
     message(STATUS "Options: " ${ADD_CLANG_TIDY_OPTIONS})
 
     # Make a directory for build of clang_tidy
@@ -351,6 +358,7 @@ macro(ADD_CLANG_TIDY)
                       -header-filter=${ADD_CLANG_TIDY_HEADER_FILTER}
                       -header-dirs="${ADD_CLANG_TIDY_HEADER_DIRS}"
                       -exclude-header-dirs="${ADD_CLANG_TIDY_HEADER_EXCLUDE_DIRS}"
+                      -checks="${ADD_CLANG_TIDY_CHECKS_STRING}"
                       ${ADD_CLANG_TIDY_OPTIONS}
                       ${CLANG_TIDY_SOURCE}
               COMMAND cmake -E touch "${CLANG_TIDY_PROXY}"
@@ -398,7 +406,7 @@ endmacro(ADD_CLANG_TIDY)
 macro(ADD_CLANG_TOOLING)
   set(options CT_WERROR CT_FIX CT_QUIET CT_ATTACH_TO_ALL CF_WERROR CF_FIX CF_QUIET DISABLE_CLANG_FORMAT DISABLE_CLANG_TIDY)
   set(oneValueArgs TARGET CT_CONFIG_FILE CF_CONFIG_FILE CT_HEADER_FILTER CT_BUILD_DIR)
-  set(multiValueArgs TARGETS SOURCE_DIRS CT_HEADER_DIRS CT_HEADER_EXCLUDE_DIRS)
+  set(multiValueArgs TARGETS SOURCE_DIRS CT_HEADER_DIRS CT_HEADER_EXCLUDE_DIRS CT_CHECKS)
   cmake_parse_arguments(ADD_CLANG_TOOLING "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
   # Check unparsed args
@@ -479,7 +487,6 @@ macro(ADD_CLANG_TOOLING)
       set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} "ATTACH_TO_ALL")
     endif(${ADD_CLANG_TOOLING_CT_ATTACH_TO_ALL})
 
-
     # Call clang-tidy
     ADD_CLANG_TIDY(
       ${CLANG_TIDY_OPTIONS}
@@ -491,6 +498,7 @@ macro(ADD_CLANG_TOOLING)
       SOURCES "${ALL_CXX_SOURCE_FILES}"
       HEADERS "${ALL_HXX_SOURCE_FILES}"
       TARGETS ${ADD_CLANG_TOOLING_TARGETS}
+      CHECKS ${ADD_CLANG_TOOLING_CT_CHECKS}
     )
   endif(NOT ${ADD_CLANG_TOOLING_DISABLE_CLANG_TIDY})
 
@@ -500,7 +508,7 @@ endmacro(ADD_CLANG_TOOLING)
 
 macro(ADD_DEFAULT_CLANG_TOOLING)
   set(options CF_NO_FIX CF_FIX)
-  set(multiValueArgs CT_HEADER_DIRS SOURCE_DIRS TARGETS)
+  set(multiValueArgs CT_HEADER_DIRS CT_CHECKS SOURCE_DIRS TARGETS)
   cmake_parse_arguments(ADD_DEFAULT_CLANG_TOOLING "${options}" "" "${multiValueArgs}" ${ARGN} )
 
   # If no target is specified, set default.
@@ -541,7 +549,8 @@ macro(ADD_DEFAULT_CLANG_TOOLING)
       ${ADD_DEFAULT_CLANG_TOOLING_SOURCE_DIRS}
     CT_HEADER_DIRS
       ${ADD_DEFAULT_CLANG_TOOLING_CT_HEADER_DIRS}
-    ${ADD_DEFAULT_CLANG_TOOLING_OPTIONS}
-    ${ARGN}
+    CT_CHECKS
+      ${ADD_DEFAULT_CLANG_TOOLING_CT_CHECKS}
+    ${ADD_DEFAULT_CLANG_TOOLING_UNPARSED_ARGUMENTS}
   )
 endmacro(ADD_DEFAULT_CLANG_TOOLING)

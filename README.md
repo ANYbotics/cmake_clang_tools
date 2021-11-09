@@ -10,22 +10,12 @@ The source code is released under a [BSD 3-Clause license](LICENSE).
 
 **Author(s):** Gabriel Hottiger
 
-# Example repository
-In the example package **clang_tools_example** two usages are explained.
-
-* ct_cmake: How to use clang_tools as a plain cmake dependency.
-* ct_submodule: How to use clang_tools as a git submodule.
-
 # Installation
 
 ## Dependencies
-* clang-7
-* clang-tidy-7
-* clang-format-7
-
-```
-  sudo apt-get install clang-7 clang-tidy-7 clang-format-7
-```
+* clang
+* clang-tidy
+* clang-format
 
 ## Build
 Both catkin and plain CMake builds are supported.
@@ -38,8 +28,8 @@ Both catkin and plain CMake builds are supported.
 
 ### CMake
 ```
-  mkdir -p clang_tools/build
-  cd clang_tools/build
+  mkdir -p cmake_clang_tools/build
+  cd cmake_clang_tools/build
   cmake ..
   make                              # local build
   sudo make install                 # install in /usr/local
@@ -47,7 +37,7 @@ Both catkin and plain CMake builds are supported.
 
 ## Uninstall
 ```
-  cd clang_tools/build
+  cd cmake_clang_tools/build
   sudo make uninstall               # uninstall from /usr/local
 ```
 
@@ -202,6 +192,7 @@ ADD_DEFAULT_CLANG_TOOLING(TARGETS target1 .. targetN
                           [CT_HEADER_EXCLUDE_DIRS excludeDir1 .. excludeDirN]
                           [CT_HEADER_FILTER header_filter]
                           [CT_BUILD_DIR build_dir]
+                          [CT_CHECKS check1 .. checkN]
                           [DISABLE_CLANG_FORMAT]
                           [CF_WERROR]
                           [CF_NO_FIX]
@@ -226,6 +217,7 @@ ADD_CLANG_TOOLING(TARGETS target1 .. targetN
                   [CT_HEADER_EXCLUDE_DIRS excludeDir1 .. excludeDirN]
                   [CT_HEADER_FILTER header_filter]
                   [CT_BUILD_DIR build_dir]
+                  [CT_CHECKS check1 .. checkN]
                   [DISABLE_CLANG_FORMAT]
                   [CF_WERROR]
                   [CF_FIX]
@@ -275,7 +267,8 @@ ADD_CLANG_TIDY(TARGETS target1 .. targetN
                [HEADER_DIRS dir1 .. dirN]
                [HEADER_EXCLUDE_DIRS excludeDir1 .. excludeDirN]
                [HEADER_FILTER header_filter]
-               [BUILD_DIR build_dir])
+               [BUILD_DIR build_dir]
+               [CHECKS check1 .. checkN])
 ```
 **TARGETS** Targets for which clang-tidy is ran on POST_BUILD
 
@@ -298,6 +291,11 @@ ADD_CLANG_TIDY(TARGETS target1 .. targetN
 **HEADER_FILTER** Header filter, regular expression (*,|) to filter headers. Only active if HEADER_DIRS are not set. (default: .\*)
 
 **BUILD_DIR** Build directory of the target, compile_commands.json should be located in here. (default: ${CMAKE_CURRENT_BINARY_DIR})
+
+**CHECKS** Add/remove checks to/from the configuration file (default: [])
+           Use the check name to add a new check or prefix the check name with `-` to remove it.
+           See [list of clang-tidy checks](https://releases.llvm.org/10.0.0/tools/clang/tools/extra/docs/clang-tidy/checks/list.html).
+
 
 # Editors
 
