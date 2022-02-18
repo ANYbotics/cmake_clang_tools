@@ -1,0 +1,10 @@
+# Toggle execution of clang-format (true/false).
+run_clang_format: true
+# Toggle execution of clang-tidy (true/false).
+run_clang_tidy: true
+# Only run cmake_clang_tools for the packages contained in this whitelist.
+# Empty list -> run on all packages.
+whitelist: { }
+# Don't run cmake_clang_tools for the packages contained in this blacklist.
+# Empty list -> run on all packages.
+blacklist: { }

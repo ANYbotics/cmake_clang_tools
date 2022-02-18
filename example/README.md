@@ -4,9 +4,10 @@ This example shows the usage of **cmake_clang_tools** for a plain CMake project.
 
 ## Build
 
+In the `example` directory execute the following commands.
 ```
-mkdir -p clang_tools/example/build
-cd clang_tools/example/build
+mkdir -p build
+cd build
 cmake ..
 make
 ```

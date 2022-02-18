@@ -21,33 +21,41 @@ The source code is released under a [BSD 3-Clause license](LICENSE).
 Both catkin and plain CMake builds are supported.
 
 ### Catkin
+
+To build `cmake_clang_tools` with catkin run the following command.
+
 ```
-  cd ~/catkin_ws/src
   catkin build cmake_clang_tools
 ```
 
 ### CMake
+
+To install `cmake_clang_tools` run the following commands in the root folder of the repository.
+
 ```
-  mkdir -p cmake_clang_tools/build
-  cd cmake_clang_tools/build
+  mkdir -p build
+  cd build
   cmake ..
   make                              # local build
   sudo make install                 # install in /usr/local
 ```
 
 ## Uninstall
+
+To uninstall `cmake_clang_tools` run the following commands in the root folder of the repository.
+
 ```
-  cd cmake_clang_tools/build
+  cd build
   sudo make uninstall               # uninstall from /usr/local
 ```
 
 # Usage
 
-## Adding clang_tooling To Project
+## Enabling cmake_clang_tools in your project.
 
-In order to use clang_tools in your CMake/catkin project you will have to add the following steps.
+In order to use `cmake_clang_tools` in your CMake/catkin project you will have to add the following steps.
 
-#### Package.xml (for catkin)
+#### Package.xml (for catkin only)
 
 ```
 <build_depend>cmake_clang_tools</build_depend>
@@ -98,42 +106,51 @@ endif(cmake_clang_tools_FOUND)
 
 Some example flags were used for the add_clang_tooling cmake macro, see below for a complete list.
 
-## Running clang_tooling
+## Running cmake_clang_tools
 
 The format checking/fixing (using clang-format) happens before the source code is built and is triggered automatically on every build.
 
 The static analysis (using clang-tidy) has two run behaviors.
 Per default, the static analysis is executed when the `run_static_analysis` CMake target is built.
 To run static analysis for `my_package` run the following command:
+
 ```
 catkin build --catkin-make-args run_static_analysis -- my_package --no-deps
 ```
 You can configure clang-tidy to run on every build, by setting the `ATTACH_TO_ALL` option for clang tidy.
-This is only recommended in combination with toggling of the clang_tooling configuration (described in the next section).
-Otherwise it can lead to significant compile time overhead during the development phase.
+This is only recommended in combination with toggling of the `cmake_clang_tools` configuration (described in the next section).
+Otherwise, it can lead to significant compile time overhead during the development phase.
 
-## Configure clang_tooling
-You can configure clang_tooling with a config file located at ```/home/user/.config/cmake_clang_tools/config.yaml```. clang_tools will generate the following default config on it's first run.
+## Configure cmake_clang_tools
+
+You can configure `cmake_clang_tools` with a config file located at ```/home/$USER/.config/cmake_clang_tools/config.yaml```. 
+The file will be generated with the following default configuration on it's first run.
+
 ```
-# Run clang-format? (true/false)
+# Toggle execution of clang-format (true/false).
 run_clang_format: true
-# Run clang-tidy? (true/false)
+# Toggle execution of clang-tidy (true/false).
 run_clang_tidy: true
-# Whitelist of packages to run clang_tools.
+# Only run cmake_clang_tools for the packages contained in this whitelist.
 # Empty list -> run on all packages.
-whitelist: {}
-# Blacklist of packages to not run cmake_clang_tools.
-# Empty list -> ignore no packages.
-blacklist: {}
+whitelist: { }
+# Don't run cmake_clang_tools for the packages contained in this blacklist.
+# Empty list -> run on all packages.
+blacklist: { }
 ```
 
-With the first two arguments you can toggle execution of clang_tidy and clang_format.
-This is meant as a temporary solution while developing, since clang_tidy can increase compile time quite a bit.
+With the first two arguments you can toggle execution of `clang_tidy` and `clang_format`.
+This is meant as a temporary solution while developing, since `clang_tidy` can increase compile time quite a bit.
 
-If you only want to run clang_tooling on some packages, you can configure a whitelist. This is useful if you are the maintainer of only a subset of packages that you compile from source.
+If you only want to run `cmake_clang_tools` on some packages, you can configure a whitelist. 
+You can also exclude packages by blacklisting them.
+This is useful if you are the maintainer of only a subset of packages that you compile from source.
 
 # Tools
+
 ## clang-format
+
+### Disable formatting
 
 To disable formatting temporarily use:
 ```
@@ -144,17 +161,15 @@ m << 2.0, 3.0
 
 ### .clang-format
 
-[List of Style Options](https://clang.llvm.org/docs/ClangFormatStyleOptions.html)
+The formatting options can be configured with a `.clang-format` file. 
 
-Current Settings:
+See the [List of Style Options](https://clang.llvm.org/docs/ClangFormatStyleOptions.html).
 
-* Based on Google
-* 120 characters column limit
-* 2 spaces indent
-* Braces on same line
-* Left pointer alignment
+Current Settings: Check out the `.clang-format` file in the `config` folder.
 
 ## clang-tidy
+
+### Disable checks
 
 To disable checks temporarily use:
 ```
@@ -167,14 +182,15 @@ Foo(double param); // NOLINT(google-explicit-constructor, google-runtime-int)
 // Silent only the specified diagnostics for the next line
 // NOLINTNEXTLINE(google-explicit-constructor, google-runtime-int)
 Foo(bool param);
-
 ```
 
 ### .clang-tidy
 
-[List of Checks](http://clang.llvm.org/extra/clang-tidy/checks/list.html)
+The code check options can be configured with a `.clang-tidy` file.
 
-Current Settings: See .clang-tidy file.
+See the [List of Checks](http://clang.llvm.org/extra/clang-tidy/checks/list.html).
+
+Current Settings: Check out the `.clang-tidy` file in the `config` folder.
 
 # CMake macros
 
@@ -270,7 +286,7 @@ ADD_CLANG_TIDY(TARGETS target1 .. targetN
                [BUILD_DIR build_dir]
                [CHECKS check1 .. checkN])
 ```
-**TARGETS** Targets for which clang-tidy is ran on POST_BUILD
+**TARGETS** Targets for which clang-tidy is run on POST_BUILD
 
 **SOURCES** Source files to run clang-tidy on
 
@@ -301,7 +317,7 @@ ADD_CLANG_TIDY(TARGETS target1 .. targetN
 
 ## CLion
 
-Clang format and clang tidy are built-in tools in CLion. Add the .clang-tidy and .clang-format files to the root of your project path.
+Clang format and clang tidy are built-in tools in CLion. Add the `.clang-tidy` and `.clang-format` files to the root of your project path.
 Jetbrains provides setup instructions for [clang format](https://blog.jetbrains.com/clion/2019/01/clion-opens-2019-1-eap-clangformat-disasm-lldb-injected-languages/#clangformat_support)
 and [clang tidy](https://www.jetbrains.com/help/clion/clang-tidy-checks-support.html#conffiles).
 

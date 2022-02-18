@@ -167,10 +167,7 @@
 # readability-uppercase-literal-suffix                        / S / too pedantic
 
 # Excluded categories:  abseil, android, cert, clang-analyzer, darwin, fuchsia, hicpp, linuxkernel,
-#                       llvm, mpi, objc, openmp, portability, zircon
-
-# To be decided:
-# performance.
+#                       llvm, mpi, objc, openmp, performance, portability, zircon
 
 Checks: '
 boost-use-to-string,
