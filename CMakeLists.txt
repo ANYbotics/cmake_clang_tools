@@ -71,9 +71,12 @@ add_custom_target(uninstall
   COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
 )
 
-# Testing
-# Attach the target to ALL to always run the tests.
-# This is not a catkin package and there is no way to run them otherwise.
-add_custom_target(test_${PROJECT_NAME} ALL
-  COMMAND pytest-3 ${CMAKE_SOURCE_DIR}/test
-)
+find_program(PYTEST pytest-3)
+if (PYTEST)
+  # Testing
+  # Attach the target to ALL to always run the tests.
+  # This is not a catkin package and there is no way to run them otherwise.
+  add_custom_target(test_${PROJECT_NAME} ALL
+    COMMAND pytest-3 ${CMAKE_SOURCE_DIR}/test
+  )
+endif()
