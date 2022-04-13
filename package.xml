@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>cmake_clang_tools</name>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <description>CMake wrapper for clang-tidy and clang-format.</description>
   <license>BSD</license>
 
