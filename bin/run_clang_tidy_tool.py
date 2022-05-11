@@ -35,7 +35,7 @@ def execute_clang_tidy(executable, files, config, build_directory, header_filter
     if fix:
         command += " --fix"
     if checks:
-        command += " --checks='{checks}'"
+        command += f" --checks='{checks}'"
 
     # Run for all files.
     for file in files:
