@@ -14,7 +14,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Build a simple library
 include_directories(include)
-add_definitions(-std=c++11)
+set(CMAKE_CXX_STANDARD 17)
 add_library(${PROJECT_NAME} src/ClangToolsExample.cpp)
 
 # Build a simple executable
