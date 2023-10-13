@@ -425,6 +425,15 @@ macro(add_clang_tooling)
   endif()
 
   if(NOT ${ADD_CLANG_TOOLING_DISABLE_CLANG_FORMAT})
+    # Additionally find all proto files
+    list(APPEND ALL_PROTO_FILES "")
+    foreach(dir ${ADD_CLANG_TOOLING_SOURCE_DIRS})
+      file(GLOB_RECURSE
+          PROTO_FILES
+          ${dir}/*.proto
+      )
+      set(ALL_PROTO_FILES ${ALL_PROTO_FILES} ${PROTO_FILES})
+    endforeach()
     # Forward options
     set(CLANG_FORMAT_OPTIONS "")
     if(${ADD_CLANG_TOOLING_CF_WERROR})
@@ -441,7 +450,7 @@ macro(add_clang_tooling)
     ADD_CLANG_FORMAT(
       ${CLANG_FORMAT_OPTIONS}
       CONFIG_FILE ${ADD_CLANG_TOOLING_CF_CONFIG_FILE}
-      SOURCES ${ALL_SOURCE_FILES}
+      SOURCES ${ALL_SOURCE_FILES} ${ALL_PROTO_FILES}
       TARGETS ${ADD_CLANG_TOOLING_TARGETS}
     )
   endif()
@@ -509,6 +518,7 @@ macro(ADD_DEFAULT_CLANG_TOOLING)
           "${CMAKE_CURRENT_SOURCE_DIR}/src"
           "${CMAKE_CURRENT_SOURCE_DIR}/include"
           "${CMAKE_CURRENT_SOURCE_DIR}/test"
+          "${CMAKE_CURRENT_SOURCE_DIR}/proto"
     )
   endif()
 
