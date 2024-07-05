@@ -1,13 +1,15 @@
-<?xml version="1.0"?>
-<package format="2">
+<?xml version='1.0' encoding='utf-8'?>
+<package format="3">
   <name>cmake_clang_tools</name>
   <version>1.0.16</version>
   <description>CMake wrapper for clang-tidy and clang-format.</description>
-  <license>BSD</license>
 
+  <author email="ghottiger@anybotics.com">Gabriel Hottiger</author>
+  <license>BSD</license>
   <maintainer email="mgaertner@anybotics.com">Magnus Gaertner</maintainer>
   <maintainer email="ynava@anybotics.com">Yoshua Nava</maintainer>
-  <author email="ghottiger@anybotics.com">Gabriel Hottiger</author>
+
+  <license>BSD</license>
 
   <buildtool_depend>cmake</buildtool_depend>
 

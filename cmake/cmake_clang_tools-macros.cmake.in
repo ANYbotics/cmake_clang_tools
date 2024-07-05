@@ -63,6 +63,7 @@ macro(add_clang_format)
   # Find the clang-format executable.
   find_program(CLANG_FORMAT
     NAMES
+      "clang-format-18"
       "clang-format-12"
       "clang-format-11"
       "clang-format-10"
@@ -247,6 +248,7 @@ macro(add_clang_tidy)
   # Find clang-tidy executable.
   find_program(CLANG_TIDY
     NAMES
+      "clang-tidy-18"
       "clang-tidy-12"
       "clang-tidy-11"
       "clang-tidy-10"
