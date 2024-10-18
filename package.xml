@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <package format="3">
   <name>cmake_clang_tools</name>
-  <version>1.0.18</version>
+  <version>1.0.19</version>
   <description>CMake wrapper for clang-tidy and clang-format.</description>
 
   <author email="ghottiger@anybotics.com">Gabriel Hottiger</author>
