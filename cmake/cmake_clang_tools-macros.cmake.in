@@ -13,13 +13,18 @@ endif()
 
 # Create config.yaml in /home/user/.config/cmake_clang_tools.
 set(CMAKE_CLANG_TOOLS_SETTINGS_DIR "$ENV{HOME}/.config/cmake_clang_tools")
-if(NOT EXISTS "${CMAKE_CLANG_TOOLS_SETTINGS_DIR}")
-  file(MAKE_DIRECTORY "${CMAKE_CLANG_TOOLS_SETTINGS_DIR}")
-endif()
 set(CMAKE_CLANG_TOOLS_SETTINGS "${CMAKE_CLANG_TOOLS_SETTINGS_DIR}/config.yaml")
+
+# Use a lock file to prevent race conditions during parallel builds.
+# The file(LOCK) command will automatically create intermediate directories and the file itself if they do not exist.
+set(CMAKE_CLANG_TOOLS_LOCK_FILE "${CMAKE_CLANG_TOOLS_SETTINGS_DIR}/.cmake_clang_tools.lock")
+file(LOCK "${CMAKE_CLANG_TOOLS_LOCK_FILE}" GUARD PROCESS TIMEOUT 60)
+
 if(NOT EXISTS "${CMAKE_CLANG_TOOLS_SETTINGS}")
-  file(COPY @CONFIG_FILE_DIR@/config.yaml DESTINATION ${CMAKE_CLANG_TOOLS_SETTINGS_DIR})
+  file(COPY "@CONFIG_FILE_DIR@/config.yaml" DESTINATION "${CMAKE_CLANG_TOOLS_SETTINGS_DIR}")
 endif()
+
+file(LOCK "${CMAKE_CLANG_TOOLS_LOCK_FILE}" RELEASE)
 
 #########################################
 #####       add_clang_format        #####
