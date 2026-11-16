@@ -1,3 +1,6 @@
+> [!NOTE]
+> This repository is archived and no longer maintained. It is a snapshot of 13 Nov 2026.
+
 # cmake_clang_tools
 
 # Overview
